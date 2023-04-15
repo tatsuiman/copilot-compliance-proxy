@@ -7,10 +7,10 @@ English | [日本語](./README.ja-JP.md)
 The configuration file `settings.yaml.template` is written in YAML format. An example of a configuration file is shown below.
 
 ```yaml
-ignore_keywords:'''
+ignore_keywords:
   - 'API_KEY="'
   - src/secret.py
-replace_keywords: 'API_KEY="' src/secret.py
+replace_keywords:
   - keyword: ph
     replace: myorg
 ```
@@ -36,7 +36,7 @@ Add the following to the github copilot extension settings
 
 ## Log of submitted source code
 The submitted source code can be viewed as follows.
-````bash
+```bash
 $ tail -f logs/payload.log
 $ cat logs/payload.log | grep 'secret keyword
 ```
