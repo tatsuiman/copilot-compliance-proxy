@@ -31,3 +31,10 @@ github copilotの拡張機能の設定に以下を追記します
   "debug.overrideProxyUrl": "http://localhost:8000"
 }
 ```
+
+## 送信されたソースコードのログ
+送信されたソースコードは以下のように確認することができます。
+```bash
+$ tail -f logs/payload.log
+$ cat logs/payload.log | grep 'secret keyword'
+```
