@@ -3,6 +3,7 @@ import json
 import time
 import requests
 import logging
+from contextlib import suppress
 from pythonjsonlogger import jsonlogger
 from module import check_payload, load_settings
 from http.server import HTTPServer
@@ -52,6 +53,7 @@ class ApiHandler(BaseHTTPRequestHandler):
                 "https://copilot-proxy.githubusercontent.com/v1/engines/copilot-codex/completions",
                 json=payload,
                 headers=self.headers,
+                stream=True,
                 timeout=60
             ) as resp:
                 # Send the response to the client
@@ -61,10 +63,16 @@ class ApiHandler(BaseHTTPRequestHandler):
                     self.send_header(header, value)
                 self.end_headers()
                 # Send the response body
-                content = resp.content
-                logger.info("completion", extra={"type": "response", "client_address": self.client_address[0], "data": content.decode()})
+                content = b''
+                suggestion = ''
+                for line in resp.iter_lines():
+                    if line:
+                        with suppress(json.JSONDecodeError):
+                            suggestion += json.loads(line.decode("utf-8")[6:])["choices"][0]["text"]
+                    content += line + b'\n'
                 self.wfile.write(content)
                 self.wfile.flush()
+                logger.info("completion", extra={"type": "response", "client_address": self.client_address[0], "data": suggestion})
 
 if __name__ == "__main__":
     # Start the server
