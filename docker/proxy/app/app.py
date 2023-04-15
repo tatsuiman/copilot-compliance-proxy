@@ -64,15 +64,15 @@ class ApiHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 # Send the response body
                 content = b''
-                suggestion = ''
+                completion = ''
                 for line in resp.iter_lines():
                     if line:
                         with suppress(json.JSONDecodeError):
-                            suggestion += json.loads(line.decode("utf-8")[6:])["choices"][0]["text"]
+                            completion += json.loads(line.decode("utf-8")[6:])["choices"][0]["text"]
                     content += line + b'\n'
                 self.wfile.write(content)
                 self.wfile.flush()
-                logger.info("completion", extra={"type": "response", "client_address": self.client_address[0], "data": suggestion})
+                logger.info("completion", extra={"type": "response", "client_address": self.client_address[0], "data": completion})
 
 if __name__ == "__main__":
     # Start the server
