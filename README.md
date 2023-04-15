@@ -12,10 +12,10 @@ replace_keywords:
   - keyword: ph
     replace: myorg
 ```
-ignore_keywordsおよびreplace_keywordsは、それぞれリスト形式で指定されます。  
-ignore_keywordsは、例外を発生させるために無視されるキーワードのリストです。  
-replace_keywordsは、置換するためのキーワードとその置換先の値のリストです。  
-keywordは置換対象のキーワード、replaceはそのキーワードがマッチした場合に置き換えられる文字列を指定します。
+* ignore_keywordsは、例外を発生させるために無視されるキーワードのリスト  
+* replace_keywordsは、置換するためのキーワードとその置換先の値のリスト  
+  - keywordは置換対象のキーワード
+  - replaceはそのキーワードがマッチした場合に置き換えられる文字列
 
 
 ## 起動方法
