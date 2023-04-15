@@ -19,6 +19,7 @@ settings = load_settings('/settings.yaml')
 
 class ApiHandler(BaseHTTPRequestHandler):
     def do_POST(self):
+        self.request.settimeout(60)
         if self.path == "/v1/engines/copilot-codex/completions":
             # Read the request body
             content_len = int(self.headers.get("content-length"))
@@ -29,8 +30,7 @@ class ApiHandler(BaseHTTPRequestHandler):
                 payload["prompt"] = check_payload(payload["prompt"], settings)
                 payload["suffix"] = check_payload(payload["suffix"], settings)
             except Exception as e:
-                print(e)
-                print(payload)
+                # Send the error to the client
                 self.send_response(200)
                 self.end_headers()
                 data = {
@@ -52,18 +52,19 @@ class ApiHandler(BaseHTTPRequestHandler):
                 "https://copilot-proxy.githubusercontent.com/v1/engines/copilot-codex/completions",
                 json=payload,
                 headers=self.headers,
-                stream=True,
+                timeout=60
             ) as resp:
+                # Send the response to the client
                 self.send_response(200)
-
+                # Send the headers
                 for header, value in resp.headers.items():
                     self.send_header(header, value)
                 self.end_headers()
-                for line in resp.iter_lines():
-                    if line:
-                        logger.info("completion", extra={"type": "response", "client_address": self.client_address[0], "data": line.decode()})
-                        self.wfile.write(line + b'\n\n')
-                        self.wfile.flush()
+                # Send the response body
+                content = resp.content
+                logger.info("completion", extra={"type": "response", "client_address": self.client_address[0], "data": content.decode()})
+                self.wfile.write(content)
+                self.wfile.flush()
 
 if __name__ == "__main__":
     # Start the server
