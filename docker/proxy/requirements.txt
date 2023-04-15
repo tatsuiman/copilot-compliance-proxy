@@ -1,3 +1,4 @@
 requests
 pyyaml
 pytest
+python-json-logger

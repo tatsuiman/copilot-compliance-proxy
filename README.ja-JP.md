@@ -35,6 +35,6 @@ github copilotの拡張機能の設定に以下を追記します
 ## 送信されたソースコードのログ
 送信されたソースコードは以下のように確認することができます。
 ```bash
-$ tail -f logs/payload.log
-$ cat logs/payload.log | grep 'secret keyword'
+$ tail -f logs/audit.log
+$ cat logs/audit.log | grep 'secret keyword'
 ```

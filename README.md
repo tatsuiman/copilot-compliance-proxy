@@ -37,6 +37,6 @@ Add the following to the github copilot extension settings
 ## Log of submitted source code
 The submitted source code can be viewed as follows.
 ```bash
-$ tail -f logs/payload.log
-$ cat logs/payload.log | grep 'secret keyword
+$ tail -f logs/audit.log
+$ cat logs/audit.log | grep 'secret keyword
 ```

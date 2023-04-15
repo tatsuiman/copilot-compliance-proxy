@@ -3,13 +3,17 @@ import json
 import time
 import requests
 import logging
+from pythonjsonlogger import jsonlogger
 from module import check_payload, load_settings
 from http.server import HTTPServer
 from http.server import BaseHTTPRequestHandler
 
 PORT = 8000
-LOGFILE="/logs/payload.log"
-logging.basicConfig(filename=LOGFILE, level=logging.INFO)
+handler = logging.FileHandler('/logs/audit.log')
+handler.setFormatter(jsonlogger.JsonFormatter(json_ensure_ascii=False))
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
 
 settings = load_settings('/settings.yaml')
 
@@ -38,9 +42,10 @@ class ApiHandler(BaseHTTPRequestHandler):
                 self.wfile.write(b"data: " + json.dumps(data).encode() + b"\n\n")
                 self.wfile.write(b"data: [DONE]\n\n")
                 self.wfile.flush()
+                logger.info(str(e), extra={"type": "ignore", "client_address": self.client_address[0], "payload": payload})
                 return
 
-            logging.info(f"{self.client_address[0]} - {payload}")
+            logger.info("request", extra={"type": "request", "client_address": self.client_address[0], "payload": payload})
 
             # Send the request to the real API
             with requests.post(
@@ -56,6 +61,7 @@ class ApiHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 for line in resp.iter_lines():
                     if line:
+                        logger.info("completion", extra={"type": "response", "client_address": self.client_address[0], "data": line.decode()})
                         self.wfile.write(line + b'\n\n')
                         self.wfile.flush()
 
