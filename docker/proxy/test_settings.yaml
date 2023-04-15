@@ -1,0 +1,6 @@
+ignore_keywords:
+  - 'API_KEY="'
+  - src/secret.py
+replace_keywords:
+  - keyword: ph
+    replace: myorg
